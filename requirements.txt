@@ -1,0 +1,7 @@
+cryptography
+sqlite3
+smtplib
+email
+windows-curses  # Per Windows
+# curses  # Per Linux/macOS
+pydrive  # Se usi Google Drive
