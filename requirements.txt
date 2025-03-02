@@ -1,7 +1,4 @@
-cryptography
-sqlite3
-smtplib
-email
-windows-curses  # Per Windows
-# curses  # Per Linux/macOS
-pydrive  # Se usi Google Drive
+google-api-python-client==2.70.0
+google-auth-httplib2==0.1.0
+google-auth-oauthlib==1.0.0
+cryptography == 3.4.8

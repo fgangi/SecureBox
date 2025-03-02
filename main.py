@@ -1,40 +1,52 @@
-from auth import login
-from vault import create_container, list_containers
-from ui import text_editor
-from backup import send_backup
-import curses
-# main Gestisce il flusso principale dell'applicazione.
-#Gestisce il menu principale
-#Integra autenticazione, gestione contenitori e backup
+import argparse
+from getpass import getpass
+
+import db
+import cloud
+
 def main():
-    key = login()
-    if not key:
-        print("Autenticazione fallita!")
-        return
-    
-    while True:
-        print("\n1. Crea Contenitore")
-        print("2. Mostra Contenitori")
-        print("3. Modifica Segreti")
-        print("4. Backup via Gmail")
-        print("5. Esci")
-        choice = input("Scelta: ")
+    parser = argparse.ArgumentParser(description="SecureBox CLI")
+    subparsers = parser.add_subparsers(dest="command")
 
-        if choice == "1":
-            name = input("Nome del contenitore: ")
-            create_container(name, key)
+    subparsers.add_parser("init", help="Initialize a new vault")
+    subparsers.add_parser("list", help="List all containers")
 
-        elif choice == "2":
-            print(list_containers())
+    create_parser = subparsers.add_parser("create-container", help="Create a new container")
+    create_parser.add_argument("name", help="Name of the container")
 
-        elif choice == "3":
-            curses.wrapper(text_editor)
+    add_secret_parser = subparsers.add_parser("add-secret", help="Add a secret to a container")
+    add_secret_parser.add_argument("container_id", type=int)
+    add_secret_parser.add_argument("secret_text", help="The secret text")
 
-        elif choice == "4":
-            send_backup()
+    show_parser = subparsers.add_parser("show", help="Show a container's secrets")
+    show_parser.add_argument("container_id", type=int)
 
-        elif choice == "5":
-            break
+    subparsers.add_parser("backup-upload", help="Upload the vault to Google Drive")
+    subparsers.add_parser("backup-download", help="Download the vault from Google Drive")
+
+    args = parser.parse_args()
+
+    if args.command == "init":
+        master_password = getpass("Set a master password for your vault: ")
+        db.init_vault(master_password)
+    elif args.command == "list":
+        master_password = getpass("Enter your master password: ")
+        db.list_containers(master_password)
+    elif args.command == "create-container":
+        master_password = getpass("Enter your master password: ")
+        db.create_container(master_password, args.name)
+    elif args.command == "add-secret":
+        master_password = getpass("Enter your master password: ")
+        db.add_secret(master_password, args.container_id, args.secret_text)
+    elif args.command == "show":
+        master_password = getpass("Enter your master password: ")
+        db.show_container(master_password, args.container_id)
+    elif args.command == "backup-upload":
+        cloud.upload_vault()
+    elif args.command == "backup-download":
+        cloud.download_vault()
+    else:
+        parser.print_help()
 
 if __name__ == "__main__":
     main()
