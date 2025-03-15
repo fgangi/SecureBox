@@ -1,6 +1,7 @@
 import os
 import json
 import encryption
+import curses_editor
 
 VAULT_FILE = "vault.sec"  # Name of the local encrypted vault file
 
@@ -92,6 +93,28 @@ def add_secret(master_password: str, container_id: int, secret_text: str):
     save_vault(master_password, data)
     print(f"Added secret to container '{container['name']}' with ID {new_secret_id}.")
 
+def edit_secret(master_password: str, container_id: int, secret_id: int):
+    """
+    Uses the curses editor to update a secret.
+    """
+    data = load_vault(master_password)
+    containers = data.get("containers", [])
+    container = next((c for c in containers if c["id"] == container_id), None)
+    if container is None:
+        print("Container not found.")
+        return
+    secret = next((s for s in container.get("secrets", []) if s["id"] == secret_id), None)
+    if secret is None:
+        print("Secret not found.")
+        return
+
+    # Launch the curses-based editor with the current secret text
+    new_text = curses_editor.curses_editor(secret["cryptedText"])
+    secret["cryptedText"] = new_text
+    save_vault(master_password, data)
+    print(f"Secret with ID {secret_id} in container '{container['name']}' has been updated.")
+
+
 def show_container(master_password: str, container_id: int):
     """
     Shows the secrets in the specified container.
@@ -105,3 +128,17 @@ def show_container(master_password: str, container_id: int):
     print(f"Container: {container['name']}")
     for secret in container.get("secrets", []):
         print(f"  Secret ID: {secret['id']}, Text: {secret['cryptedText']}")
+
+def delete_container(master_password: str, container_id: int):
+    """
+    Deletes the specified container from the vault.
+    """
+    data = load_vault(master_password)
+    containers = data.get("containers", [])
+    new_containers = [c for c in containers if c.get("id") != container_id]
+    if len(new_containers) == len(containers):
+        print("Container not found.")
+        return
+    data["containers"] = new_containers
+    save_vault(master_password, data)
+    print(f"Container with ID {container_id} has been removed.")
