@@ -12,7 +12,7 @@ class CustomArgumentParser(argparse.ArgumentParser):
         self.exit(2, f"\nerror: {message}\n")
 
 def main():
-    # Custom usage string for the main parser with single-line entries for each command.
+    # Custom usage string for the main parser with single-line entries for each command
     custom_usage = (
         "python main.py [command] [arguments]\n\n"
         "Commands:\n"
@@ -20,8 +20,8 @@ def main():
         "  list                                         - List all containers in the vault.\n"
         "  create-container <name>                      - Create a new container with the specified name.\n"
         "  delete-container <container_id>              - Delete the container identified by its ID.\n"
-        "  add-secret <container_id> <secret_text>      - Add a secret to the specified container.\n"
         "  show <container_id>                          - Display all secrets in the specified container.\n"
+        "  add-secret <container_id> <secret_text>      - Add a secret to the specified container.\n"
         "  edit-secret <container_id> <secret_id>       - Edit an existing secret.\n"
         "  backup-upload                                - Upload the vault file to Google Drive.\n"
         "  backup-download                              - Download the vault file from Google Drive.\n\n"
@@ -63,7 +63,7 @@ def main():
     subparsers.add_parser("backup-upload", help="Upload the vault to Google Drive")
     subparsers.add_parser("backup-download", help="Download the vault from Google Drive")
 
-    # If no arguments are provided, print custom usage and exit.
+    # If no arguments are provided, print custom usage and exit
     if len(sys.argv) == 1:
         parser.print_usage()
         sys.exit(1)

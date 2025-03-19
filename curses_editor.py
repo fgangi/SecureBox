@@ -37,8 +37,3 @@ def curses_editor(initial_text=""):
     
     # Use curses.wrapper to safely initialize and tear down the curses environment
     return curses.wrapper(editor)
-
-# Example usage:
-if __name__ == "__main__":
-    result = curses_editor("Type your secret here...")
-    print("Edited text:", result)

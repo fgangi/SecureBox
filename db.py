@@ -87,7 +87,7 @@ def add_secret(master_password: str, container_id: int, secret_text: str):
     new_secret_id = len(secrets_list) + 1
     secrets_list.append({
         "id": new_secret_id,
-        "cryptedText": secret_text  # In a real system, you might re-encrypt individually, but this is a simpler approach
+        "cryptedText": secret_text
     })
     container["secrets"] = secrets_list
     save_vault(master_password, data)

@@ -49,7 +49,7 @@ def download_vault():
     Overwrites the local vault.sec if found.
     """
     service = get_drive_service()
-    # For simplicity, let's search by name. A better approach is to store the file ID somewhere.
+    # For simplicity, let's search by name. You can also search by file ID.
     query = f"name='{VAULT_FILE}' and trashed=false"
     response = service.files().list(q=query, spaces="drive", fields="files(id, name)").execute()
     files = response.get("files", [])
